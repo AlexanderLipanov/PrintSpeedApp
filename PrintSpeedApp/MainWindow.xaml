@@ -3,10 +3,16 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PrintSpeedApp"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-
+        <TextBox 
+            TextChanged="TextBox_OnChanged"
+            MouseDoubleClick="TextBox_MouseDoubleClick"
+            Height="100px" 
+            VerticalAlignment="Top"
+            >
+           Введите текст
+        </TextBox>
     </Grid>
 </Window>
