@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -11,31 +11,39 @@ namespace AnalizerApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static TcpClient tcpClient = new TcpClient("95.161.223.161", 49690);
-        public static NetworkStream networkStream = tcpClient.GetStream();
+        //"95.161.223.161", 49690
+        private string _responseData = string.Empty;
         public MainWindow()
         {
             InitializeComponent();
+        }
 
+        public async Task GetDataAsync()
+        {
             try
             {
-                ConnectAsTcpClient();
+                using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+                await socket.ConnectAsync("localhost", 55785);
+
+                if (socket.Connected)
+                {
+                    var responseBytes = new byte[512];
+                    var bytes = await socket.ReceiveAsync(responseBytes);
+                    string response = Encoding.UTF8.GetString(responseBytes, 0, bytes);
+                    Console.WriteLine(response);
+                    _responseData = response;
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                Console.WriteLine("Server Error");
+                throw ex;
             }
         }
 
-        public static String response = string.Empty;
-
-        public async Task ConnectAsTcpClient()
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            Byte[] data = new Byte[256];
-            Int32 bytes = await networkStream.ReadAsync(data, 0, data.Length);
-            response = System.Text.Encoding.UTF8.GetString(data);
-            Console.WriteLine($"Response: {response}");
+            await GetDataAsync();
         }
-
     }
 }

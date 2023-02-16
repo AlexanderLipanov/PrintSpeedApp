@@ -1,8 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
+﻿using System.Net.Sockets;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -14,48 +11,29 @@ namespace UI
     /// </summary>
     public partial class TextForm
     {
-
-        public static TcpListener tcpListener = new TcpListener(IPAddress.Any, 49690);
-        private string textData = string.Empty;
-
         public TextForm()
         {
             InitializeComponent();
-
-            try
-            {
-                Connect();
-            }
-            catch
-            {
-
-            }
         }
 
-        private async Task Connect()
+        private async Task SendDataAsync(string data)
         {
             try
             {
-                tcpListener.Start();
+                using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-                using var tcpClient = await tcpListener.AcceptTcpClientAsync();
+                await socket.ConnectAsync("localhost", 55785);
 
-                var stream = tcpClient.GetStream();
-
-                using var sr = new StreamWriter(stream);
-
-                while (true)
+                if (socket.Connected)
                 {
-                    await sr.WriteLineAsync(textData);
-                    await sr.FlushAsync();
+                    var messageBytes = Encoding.UTF8.GetBytes(data);
 
-                    // Задержка, что бы разгрузить CPU
-                    Thread.Sleep(500);
+                    await socket.SendAsync(messageBytes);
                 }
+
             }
             finally
             {
-                tcpListener.Stop();
             }
         }
 
@@ -65,7 +43,7 @@ namespace UI
 
             if (textBox is null) return;
 
-
+            await SendDataAsync(textBox.Text);
         }
 
         private void TextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
