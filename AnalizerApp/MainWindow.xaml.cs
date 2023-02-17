@@ -1,15 +1,10 @@
 ﻿using System;
-using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 
 namespace AnalizerApp
 {
@@ -24,13 +19,13 @@ namespace AnalizerApp
 
         public MainWindow()
         {
-            InitializeComponent();          
+            InitializeComponent();
 
             try
             {
                 ListenAsync();
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -42,29 +37,39 @@ namespace AnalizerApp
             {
                 tcpListener.Start();
 
-                while (true) 
-                {
-                    TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
 
+                while (true)
+                {
+
+                    TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
                     var stream = tcpClient.GetStream();
 
                     var reader = new StreamReader(stream);
 
-                    var data = await reader.ReadLineAsync();
-
-                    outputText.Text = _responseData;
+                    _responseData = await reader.ReadLineAsync();
 
                     Thread.Sleep(100);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-
+                throw ex;
             }
             finally
             {
                 tcpListener.Stop();
             }
+        }
+
+        private string _dataLengeth = string.Empty;
+
+        private void Calculate(object sender, RoutedEventArgs e)
+        {
+            if (_responseData is null) return;
+
+            _dataLengeth = _responseData.Length.ToString();
+            lengthData.Text = _dataLengeth;
+            Console.WriteLine(_responseData?.Length);
         }
     }
 }
