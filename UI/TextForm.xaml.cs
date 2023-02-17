@@ -12,8 +12,11 @@ namespace UI
     /// </summary>
     public partial class TextForm
     {
+        //  private IApiManager _apiManger;
+
         public TextForm()
         {
+            //   _apiManger = apiManager;
             InitializeComponent();
         }
 
@@ -33,10 +36,10 @@ namespace UI
                 }
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return; 
+                return;
             }
             finally
             {
@@ -49,6 +52,7 @@ namespace UI
 
             if (textBox is null) return;
 
+            // await _apiManger.SendDataAsync(textBox.Text);
             await SendDataAsync(textBox.Text);
         }
 

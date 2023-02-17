@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrintSpeedApp", "PrintSpeed
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI", "..\UI\UI.csproj", "{0CFC49ED-B84A-4ECD-9D01-3F466B849DF8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "..\API\API.csproj", "{7F7D0CE5-8DD9-42E9-BFE2-C834A1F50AE0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{0CFC49ED-B84A-4ECD-9D01-3F466B849DF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0CFC49ED-B84A-4ECD-9D01-3F466B849DF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0CFC49ED-B84A-4ECD-9D01-3F466B849DF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F7D0CE5-8DD9-42E9-BFE2-C834A1F50AE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F7D0CE5-8DD9-42E9-BFE2-C834A1F50AE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F7D0CE5-8DD9-42E9-BFE2-C834A1F50AE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F7D0CE5-8DD9-42E9-BFE2-C834A1F50AE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

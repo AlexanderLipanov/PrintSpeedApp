@@ -14,6 +14,8 @@ namespace PrintSpeedApp
                 // внедряем сервисы
                 .ConfigureServices(services =>
                 {
+                    // services.AddTransient<IApiManager, ApiManager>();
+
                     services.AddSingleton<App>();
                     services.AddSingleton<MainWindow>();
                 })

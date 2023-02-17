@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\API\API.csproj" />
     <ProjectReference Include="..\UI\UI.csproj" />
   </ItemGroup>
 
