@@ -8,7 +8,7 @@ await server.ListenAsync();
 
 public class Server
 {
-    TcpListener tcpListener = new TcpListener(IPAddress.Any, 55785); // сервер для прослушивания
+    TcpListener tcpListener = new TcpListener(IPAddress.Any, 55785); 
 
     List<Client> clients = new List<Client>();
 

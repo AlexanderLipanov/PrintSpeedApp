@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using System;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -31,6 +32,11 @@ namespace UI
                     await socket.SendAsync(messageBytes);
                 }
 
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return; 
             }
             finally
             {

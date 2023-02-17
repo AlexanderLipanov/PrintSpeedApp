@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:AnalizerApp"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <Button Click="Button_Click">GetData</Button>
+    <Grid> 
+        <TextBlock x:Name="outputText" />
     </Grid>
 </Window>
