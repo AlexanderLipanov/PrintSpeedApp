@@ -1,17 +1,13 @@
 ﻿namespace AnalizeData
 {
     public class AnalizerManager : IAnalizerManager
-    {
-        public long InstantaneousSpeed(string data)
-        {
-            long speed = 0;
-
-            return speed;
-        }
+    {  
+        public double PrintSpeed(double instantSecond, int dataCount)
+            => dataCount / instantSecond;
     }
 
     public interface IAnalizerManager
     {
-
+        double PrintSpeed(double instantSecond, int dataCount);
     }
 }

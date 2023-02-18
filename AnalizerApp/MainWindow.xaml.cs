@@ -20,33 +20,33 @@ namespace AnalizerApp
 
         private readonly IAnalizerManager _analizer;
 
-        private Stopwatch _stopwatch = new();
 
-        private string? _responseData = string.Empty;
-        private long _totalCount = 0;
-        private long _totalSeconds = 0;
+        private string _responseLastData = string.Empty;
+        private double _totalSeconds = 0;
 
         public MainWindow(IAnalizerManager analizerManager)
         {
             _analizer = analizerManager;
+
             InitializeComponent();
+
             DataContext = this;
-            Values1 = new();
-            Values2 = new();
+
+            InstantSpeedSeries = new();
+            AverageSpeedSeries = new();
+
             try
             {
-                _stopwatch.Start();
                 ListenAsync();
             }
             catch (Exception ex)
             {
-                _stopwatch.Stop();
                 Console.WriteLine(ex.Message);
             }
         }
 
-        public ChartValues<double> Values1 { get; set; }
-        public ChartValues<double> Values2 { get; set; }
+        public ChartValues<double> InstantSpeedSeries { get; set; }
+        public ChartValues<double> AverageSpeedSeries { get; set; }
 
         private async Task ListenAsync()
         {
@@ -56,19 +56,38 @@ namespace AnalizerApp
 
                 while (true)
                 {
-                    var sw = new Stopwatch();
-                    sw.Start();
-                    _responseData = string.Empty;
-
                     TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
+
                     var stream = tcpClient.GetStream();
 
                     var reader = new StreamReader(stream);
 
-                    _responseData = await reader.ReadLineAsync();
-                    sw.Stop();
-                    UpdateChart(sw.Elapsed.TotalSeconds);
-                    //   Thread.Sleep(100);
+                    var stopWatch = new Stopwatch();
+
+                    stopWatch.Start();
+
+                    var data = await reader.ReadLineAsync();
+
+                    stopWatch.Stop();
+
+                    _totalSeconds += stopWatch.Elapsed.TotalSeconds;
+
+                    if (data is not null)
+                    {
+                        var currentDataCount = _responseLastData.Count() - data.Count();
+                        var instantSpeed = _analizer.PrintSpeed(stopWatch.Elapsed.TotalSeconds, currentDataCount);
+                        var averageSpeed = _analizer.PrintSpeed(_totalSeconds, data.Count());
+
+                        if (instantSpeed is not double.PositiveInfinity or double.NegativeInfinity
+                            || averageSpeed is not double.PositiveInfinity or double.NegativeInfinity)
+                        {
+                            UpdateChart(stopWatch.Elapsed.TotalSeconds, averageSpeed);
+                        }
+                        _responseLastData = data;
+
+                        if(data.Count() == 0) _totalSeconds = 0;
+                    }
+
                 }
             }
             catch (Exception ex)
@@ -81,20 +100,10 @@ namespace AnalizerApp
             }
         }
 
-        private string _dataLengeth = string.Empty;
-
-        private void UpdateChart(double s)
+        private void UpdateChart(double instantSpeed, double averageSpeed)
         {
-            double momentSpeed = 0;
-            if (_responseData != null)
-            {
-
-                _totalSeconds = _stopwatch.Elapsed.Seconds;
-                _totalCount = _responseData.Count();
-                momentSpeed = _responseData.Count() / s;
-            }
-            Values1.Add(momentSpeed);
-            Values2.Add(_totalCount / _totalSeconds);
+            InstantSpeedSeries.Add(instantSpeed);
+            AverageSpeedSeries.Add(averageSpeed);
         }
     }
 }
