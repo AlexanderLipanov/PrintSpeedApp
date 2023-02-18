@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using AnalizeData;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 
@@ -14,6 +15,8 @@ namespace AnalizerApp
                 // внедряем сервисы
                 .ConfigureServices(services =>
                 {
+                    services.AddScoped<IAnalizerManager, AnalizerManager>();
+
                     services.AddSingleton<App>();
                     services.AddSingleton<MainWindow>();
                 })

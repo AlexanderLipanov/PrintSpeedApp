@@ -1,8 +1,11 @@
-﻿using System;
+﻿using AnalizeData;
+using LiveCharts;
+using System;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -15,21 +18,35 @@ namespace AnalizerApp
     {
         TcpListener tcpListener = new TcpListener(IPAddress.Any, 55785);
 
+        private readonly IAnalizerManager _analizer;
+
+        private Stopwatch _stopwatch = new();
+
         private string? _responseData = string.Empty;
+        private long _totalCount = 0;
+        private long _totalSeconds = 0;
 
-        public MainWindow()
+        public MainWindow(IAnalizerManager analizerManager)
         {
+            _analizer = analizerManager;
             InitializeComponent();
-
+            DataContext = this;
+            Values1 = new();
+            Values2 = new();
             try
             {
+                _stopwatch.Start();
                 ListenAsync();
             }
             catch (Exception ex)
             {
+                _stopwatch.Stop();
                 Console.WriteLine(ex.Message);
             }
         }
+
+        public ChartValues<double> Values1 { get; set; }
+        public ChartValues<double> Values2 { get; set; }
 
         private async Task ListenAsync()
         {
@@ -37,9 +54,11 @@ namespace AnalizerApp
             {
                 tcpListener.Start();
 
-
                 while (true)
                 {
+                    var sw = new Stopwatch();
+                    sw.Start();
+                    _responseData = string.Empty;
 
                     TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
                     var stream = tcpClient.GetStream();
@@ -47,8 +66,9 @@ namespace AnalizerApp
                     var reader = new StreamReader(stream);
 
                     _responseData = await reader.ReadLineAsync();
-
-                    Thread.Sleep(100);
+                    sw.Stop();
+                    UpdateChart(sw.Elapsed.TotalSeconds);
+                    //   Thread.Sleep(100);
                 }
             }
             catch (Exception ex)
@@ -63,13 +83,18 @@ namespace AnalizerApp
 
         private string _dataLengeth = string.Empty;
 
-        private void Calculate(object sender, RoutedEventArgs e)
+        private void UpdateChart(double s)
         {
-            if (_responseData is null) return;
+            double momentSpeed = 0;
+            if (_responseData != null)
+            {
 
-            _dataLengeth = _responseData.Length.ToString();
-            lengthData.Text = _dataLengeth;
-            Console.WriteLine(_responseData?.Length);
+                _totalSeconds = _stopwatch.Elapsed.Seconds;
+                _totalCount = _responseData.Count();
+                momentSpeed = _responseData.Count() / s;
+            }
+            Values1.Add(momentSpeed);
+            Values2.Add(_totalCount / _totalSeconds);
         }
     }
 }

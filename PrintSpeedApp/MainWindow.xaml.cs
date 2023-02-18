@@ -1,5 +1,4 @@
 ﻿using API;
-using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -24,7 +23,7 @@ namespace PrintSpeedApp
 
             if (textBox is null) return;
 
-             await _apiManager.SendDataAsync(textBox.Text);
+            await _apiManager.SendDataAsync(textBox.Text);
         }
 
         private void TextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
