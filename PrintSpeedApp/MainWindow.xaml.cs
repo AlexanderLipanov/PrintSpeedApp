@@ -1,4 +1,5 @@
-﻿using System;
+﻿using API;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,19 +11,20 @@ namespace PrintSpeedApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        private readonly IApiManager _apiManager;
+        public MainWindow(IApiManager apiManager)
         {
+            _apiManager = apiManager;
             InitializeComponent();
         }
 
-        private void TextBox_OnChanged(object sender, TextChangedEventArgs e)
+        private async void TextBox_OnChanged(object sender, TextChangedEventArgs e)
         {
             TextBox? textBox = sender as TextBox;
 
             if (textBox is null) return;
 
-
-            Console.WriteLine(textBox.Text);
+             await _apiManager.SendDataAsync(textBox.Text);
         }
 
         private void TextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)

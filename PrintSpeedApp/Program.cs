@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using API;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 
@@ -14,7 +15,7 @@ namespace PrintSpeedApp
                 // внедряем сервисы
                 .ConfigureServices(services =>
                 {
-                    // services.AddTransient<IApiManager, ApiManager>();
+                    services.AddTransient<IApiManager, ApiManager>();
 
                     services.AddSingleton<App>();
                     services.AddSingleton<MainWindow>();

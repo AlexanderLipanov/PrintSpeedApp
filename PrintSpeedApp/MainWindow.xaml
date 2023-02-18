@@ -7,6 +7,14 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <UI:TextForm />
+        <TextBox       
+      mc:Ignorable="d" 
+      Height="100px" 
+      VerticalAlignment="Top"
+      TextChanged="TextBox_OnChanged"
+      MouseDoubleClick="TextBox_MouseDoubleClick"
+            >
+            Введите текст
+        </TextBox>
     </Grid>
 </Window>
