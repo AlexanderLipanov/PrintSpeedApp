@@ -21,8 +21,10 @@ namespace AnalizerApp
         private readonly IAnalizerManager _analizer;
 
 
-        private string _responseLastData = string.Empty;
+        private string _responseData = string.Empty;
+
         private double _totalSeconds = 0;
+        private double _instantSeconds = 0;
 
         public MainWindow(IAnalizerManager analizerManager)
         {
@@ -54,40 +56,44 @@ namespace AnalizerApp
             {
                 tcpListener.Start();
 
+                Stopwatch instantSopWatch = new();
+
                 while (true)
                 {
-                    TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
+                    TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();                   
 
                     var stream = tcpClient.GetStream();
-
+                    
                     var reader = new StreamReader(stream);
-
-                    var stopWatch = new Stopwatch();
-
-                    stopWatch.Start();
+     
+                    instantSopWatch.Start();
 
                     var data = await reader.ReadLineAsync();
 
-                    stopWatch.Stop();
+                    instantSopWatch.Stop();
 
-                    _totalSeconds += stopWatch.Elapsed.TotalSeconds;
+                    _totalSeconds += instantSopWatch.Elapsed.TotalSeconds;
+                    _instantSeconds += instantSopWatch.Elapsed.TotalSeconds;
 
                     if (data is not null)
-                    {
-                        var currentDataCount = _responseLastData.Count() - data.Count();
-                        var instantSpeed = _analizer.PrintSpeed(stopWatch.Elapsed.TotalSeconds, currentDataCount);
-                        var averageSpeed = _analizer.PrintSpeed(_totalSeconds, data.Count());
+                    {                        
+                        _responseData = data;
+                        var currentCount = data.Count() - _responseData.Count();
+
+                        var instantSpeed = _analizer.PrintSpeed(_instantSeconds, data.Count());
+                        var averageSpeed = _analizer.PrintSpeed(_totalSeconds, _responseData.Count());
 
                         if (instantSpeed is not double.PositiveInfinity or double.NegativeInfinity
                             || averageSpeed is not double.PositiveInfinity or double.NegativeInfinity)
                         {
-                            UpdateChart(stopWatch.Elapsed.TotalSeconds, averageSpeed);
+                            UpdateChart(instantSopWatch.Elapsed.TotalSeconds, averageSpeed);
                         }
-                        _responseLastData = data;
-
-                        if(data.Count() == 0) _totalSeconds = 0;
                     }
-
+                    else
+                    {
+                        instantSopWatch = new();
+                        _instantSeconds = 0;
+                    }
                 }
             }
             catch (Exception ex)

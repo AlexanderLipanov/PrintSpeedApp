@@ -2,8 +2,8 @@
 {
     public class AnalizerManager : IAnalizerManager
     {  
-        public double PrintSpeed(double instantSecond, int dataCount)
-            => dataCount / instantSecond;
+        public double PrintSpeed(double seconds, int dataCount)
+            => dataCount / seconds;
     }
 
     public interface IAnalizerManager

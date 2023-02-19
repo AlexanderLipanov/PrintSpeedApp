@@ -8,13 +8,14 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <lvc:CartesianChart Background="#222E31">
+        <lvc:CartesianChart Background="#222E31" Margin="0,0,0,217">
             <lvc:CartesianChart.Series>
                 <lvc:LineSeries Values="{Binding InstantSpeedSeries}" 
                        StrokeThickness="4" 
                        StrokeDashArray="2" 
                        Stroke="#6BBA45" 
-                       Fill="Transparent" 
+                       Fill="Transparent"
+                                Title="Мнгновенная скорость"
                        LineSmoothness="0" 
                        PointGeometry="{x:Null}" />
                 <lvc:LineSeries Values="{Binding AverageSpeedSeries}" 
@@ -22,7 +23,8 @@
                        StrokeDashArray="2" 
                        Stroke="#fcba03" 
                        Fill="Transparent" 
-                       LineSmoothness="0" 
+                       LineSmoothness="0"  
+                                Title="Средняя скорость"                                
                        PointGeometry="{x:Null}" />
             </lvc:CartesianChart.Series>
             <lvc:CartesianChart.AxisX>
