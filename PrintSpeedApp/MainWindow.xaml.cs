@@ -1,4 +1,5 @@
 ﻿using API;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,6 +13,7 @@ namespace PrintSpeedApp
     public partial class MainWindow : Window
     {
         private readonly IApiManager _apiManager;
+
         public MainWindow(IApiManager apiManager)
         {
             _apiManager = apiManager;
@@ -26,9 +28,9 @@ namespace PrintSpeedApp
 
             var data = textBox.Text;
 
-            if(data == null || data == "Введите текст") return;
+            if (string.IsNullOrEmpty(data) || data == "Введите сообщение") return;
 
-            await _apiManager.SendDataAsync(data);
+            await _apiManager.SendDataAsync(data.LastOrDefault().ToString());
         }
 
         private void TextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)

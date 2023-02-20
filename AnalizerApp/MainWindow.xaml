@@ -50,5 +50,14 @@
                 </lvc:Axis>
             </lvc:CartesianChart.AxisY>
         </lvc:CartesianChart>
+        <TextBlock       
+      mc:Ignorable="d" 
+      Height="100px"
+            FontSize="20px"
+            Padding="20px,0"
+            Text="{Binding CurrentSymbol}"            
+            RenderTransformOrigin="0.501,1.191" 
+            Margin="0,222,0,112"
+            />
     </Grid>
 </Window>
