@@ -95,7 +95,7 @@ namespace AnalizerApp
                         _instantCount++;
                         _totalCount++;
 
-                        _totalSeconds += DateTimeOffset.Now.ToUnixTimeSeconds() - _start;
+                        _totalSeconds = DateTimeOffset.Now.ToUnixTimeSeconds() - _start;
 
                         CurrentSymbol = data;
 
