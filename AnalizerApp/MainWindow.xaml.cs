@@ -1,11 +1,16 @@
 ﻿using AnalizeData;
 using LiveCharts;
+using LiveCharts.Defaults;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -20,7 +25,8 @@ namespace AnalizerApp
 
         private readonly IAnalizerManager _analizer;
 
-        private long _start = DateTimeOffset.Now.ToUnixTimeSeconds();
+        private long _averageStart = 0;
+        private long _instantStart = 0;
 
         private double _totalSeconds = 0;
         private int _totalCount = 0;
@@ -35,17 +41,27 @@ namespace AnalizerApp
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
 
+        private string _responseData = string.Empty;
+
         private string _currentSymbol = string.Empty;
         public string CurrentSymbol
         {
-            get
-            {
-                return _currentSymbol;
-            }
+            get=> "Нажатая клавиша: " + _currentSymbol;
             set
             {
                 _currentSymbol = value;
                 OnPropertyChanged(nameof(CurrentSymbol));
+            }
+        }
+
+        private string _averageSymbol = string.Empty;
+        public string AverageSymbol
+        {
+            get => "Среднее значение: " + _averageSymbol;
+            set
+            {
+                _averageSymbol = value;
+                OnPropertyChanged(nameof(AverageSymbol));
             }
         }
 
@@ -71,8 +87,9 @@ namespace AnalizerApp
             }
         }
 
-        public ChartValues<double> InstantSpeedSeries { get; set; }
-        public ChartValues<double> AverageSpeedSeries { get; set; }
+        public ChartValues<DateTimePoint> InstantSpeedSeries { get; set; }
+        public ChartValues<DateTimePoint> AverageSpeedSeries { get; set; }
+
 
         private async Task ListenAsync()
         {
@@ -92,10 +109,23 @@ namespace AnalizerApp
 
                     if (!string.IsNullOrEmpty(data))
                     {
+                        _responseData += data;
+
+                        CurrentSymbol = data.LastOrDefault().ToString();
+
+                        if (_instantCount == 0
+                            && _totalCount == 0
+                            && _averageStart == 0)
+                            _averageStart = DateTimeOffset.Now.ToUnixTimeSeconds();
+
+                        if (_instantCount == 0)
+                            _instantStart = DateTimeOffset.Now.ToUnixTimeSeconds();
+
                         _instantCount++;
                         _totalCount++;
 
-                        _totalSeconds = DateTimeOffset.Now.ToUnixTimeSeconds() - _start;
+                        _totalSeconds = DateTimeOffset.Now.ToUnixTimeSeconds() - _averageStart;
+                        _instantSeconds = DateTimeOffset.Now.ToUnixTimeSeconds() - _instantStart;
 
                         CurrentSymbol = data;
 
@@ -103,6 +133,12 @@ namespace AnalizerApp
                         var averageSpeed = _analizer.PrintSpeed(_totalSeconds, _totalCount);
 
                         UpdateChart(instantSpeed, averageSpeed);
+                        SetAverageSymbol();
+                    }
+                    else
+                    {
+                        CurrentSymbol = string.Empty;
+                        _instantCount = 0;
                     }
                 }
             }
@@ -120,11 +156,46 @@ namespace AnalizerApp
         {
             if (instantSpeed != double.NegativeInfinity
                 && instantSpeed != double.PositiveInfinity)
-                InstantSpeedSeries.Add(instantSpeed);
+                InstantSpeedSeries.Add(new()
+                {
+                    DateTime = DateTime.Now,
+                    Value = instantSpeed,
+                });
 
             if (averageSpeed != double.NegativeInfinity
                 && averageSpeed != double.PositiveInfinity)
-                AverageSpeedSeries.Add(averageSpeed);
+                AverageSpeedSeries.Add(new()
+                {
+                    DateTime = DateTime.Now,
+                    Value = averageSpeed,
+                });
+
+            Debug.WriteLine(instantSpeed);
+        }
+
+        private void SetAverageSymbol()
+        {
+            if (string.IsNullOrEmpty(_responseData)) return;
+
+            KeyValuePair<string, int> dataSymbol = new("", 0);
+          
+            for (var i = 0; i < _responseData.Count(); i++)
+            {
+                var p = _responseData.Substring(i, 1);
+
+                if (p == null) continue;
+
+                var t = _responseData.Where(e => e.ToString() == p).Count();
+
+                if (t > dataSymbol.Value)
+                    dataSymbol = new(p, t);
+
+#if DEBUG
+                Debug.WriteLine($"AverageIndexOf: {_responseData.Substring(i, 1)} / Count: {t}");
+#endif
+            }
+
+            AverageSymbol = dataSymbol.Key;
         }
     }
 }

@@ -28,9 +28,11 @@ namespace PrintSpeedApp
 
             var data = textBox.Text;
 
-            if (string.IsNullOrEmpty(data) || data == "Введите сообщение") return;
+            if (data == "Введите сообщение") return;
 
-            await _apiManager.SendDataAsync(data.LastOrDefault().ToString());
+            await _apiManager.SendDataAsync(!string.IsNullOrEmpty(data)
+                ? data.LastOrDefault().ToString()
+                : data);
         }
 
         private void TextBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)

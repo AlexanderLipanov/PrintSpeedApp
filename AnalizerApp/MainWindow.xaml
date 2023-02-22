@@ -10,18 +10,18 @@
     <Grid>
         <lvc:CartesianChart Background="#222E31" Margin="0,0,0,217">
             <lvc:CartesianChart.Series>
-                <lvc:LineSeries Values="{Binding InstantSpeedSeries}" 
+                <lvc:LineSeries Values="{Binding InstantSpeedSeries}"                                 
                        StrokeThickness="4" 
-                       StrokeDashArray="2" 
+                       StrokeDashArray="2"                                 
                        Stroke="#6BBA45" 
-                       Fill="Transparent"
+                       Fill="Transparent"                                          
                                 Title="Мнгновенная скорость"
                        LineSmoothness="0" 
                        PointGeometry="{x:Null}" />
-                <lvc:LineSeries Values="{Binding AverageSpeedSeries}" 
+                <lvc:LineSeries Values="{Binding AverageSpeedSeries}"                                 
                        StrokeThickness="4" 
                        StrokeDashArray="2" 
-                       Stroke="#fcba03" 
+                       Stroke="#fcba03"                             
                        Fill="Transparent" 
                        LineSmoothness="0"  
                                 Title="Средняя скорость"                                
@@ -54,10 +54,21 @@
       mc:Ignorable="d" 
       Height="100px"
             FontSize="20px"
-            Padding="20px,0"
-            Text="{Binding CurrentSymbol}"            
+            ToolTip="Current"
+            Padding="20px,0"            
+            Text="{Binding CurrentSymbol, IsAsync=True}"            
             RenderTransformOrigin="0.501,1.191" 
             Margin="0,222,0,112"
+            />
+        <TextBlock    
+            ToolTip="Average"
+      mc:Ignorable="d" 
+      Height="100px"
+            FontSize="20px"
+            Padding="20px,0"
+            Text="{Binding AverageSymbol, IsAsync=True}"            
+            RenderTransformOrigin="0.501,1.191" 
+            Margin="0,300,0,34"
             />
     </Grid>
 </Window>
