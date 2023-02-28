@@ -10,7 +10,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -46,7 +45,7 @@ namespace AnalizerApp
         private string _currentSymbol = string.Empty;
         public string CurrentSymbol
         {
-            get=> "Нажатая клавиша: " + _currentSymbol;
+            get => "Нажатая клавиша: " + _currentSymbol;
             set
             {
                 _currentSymbol = value;
@@ -99,11 +98,11 @@ namespace AnalizerApp
 
                 while (true)
                 {
-                    TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
+                    using TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
 
                     var stream = tcpClient.GetStream();
 
-                    var reader = new StreamReader(stream);
+                    using var reader = new StreamReader(stream);
 
                     var data = await reader.ReadLineAsync();
 
@@ -178,7 +177,7 @@ namespace AnalizerApp
             if (string.IsNullOrEmpty(_responseData)) return;
 
             KeyValuePair<string, int> dataSymbol = new("", 0);
-          
+
             for (var i = 0; i < _responseData.Count(); i++)
             {
                 var p = _responseData.Substring(i, 1);
